@@ -1,0 +1,4 @@
+---
+server:
+  port: ${teb-data.port}
+  adress: ${teb-data.hostname}

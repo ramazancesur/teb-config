@@ -1,0 +1,55 @@
+---
+site-url: https://localhost
+
+server:
+  servlet:
+    session:
+      cookie:
+        path: /${spring.application.name}
+
+config-service:
+  hostname: config-server
+  port: 80
+
+discovery-service:
+  hostname: discovery-service
+  port: 8500
+
+
+spring:
+  cloud:
+    consul:
+      host: ${discovery-service.hostname}
+      discovery:
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}
+        prefer-ip-address: true
+        fail-fast: true
+        health-check-tls-skip-verify: true
+        tags: traefik.enable=true, traefik.tags=api, traefik.tags=external, traefik.frontend.rule=PathPrefix:/${spring.application.name};PathPrefixStrip:/${spring.application.name}
+      retry:
+        initial-interval: 3000
+        max-attempts: 100
+        max-interval: 5000
+
+
+kafka:
+  server: localhost
+  port: 9092
+  fkServer: localhost
+  fkPort: 443
+  factory:
+    batch-listener: false
+  consumer:
+    enable-auto-commit: true
+    session-timeout-ms: 30000
+    fetch:
+      min-bytes: 900000
+    config:
+      max:
+        poll:
+          records: 1000
+      fetch:
+        max:
+          wait-ms: 3000
+    auto:
+      commit-interval-ms: 1000
